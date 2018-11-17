@@ -5,16 +5,11 @@ import java.util.concurrent.locks.Condition;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class AbstractFixnumLockTest extends TestCase {
-
-    AbstractFixnumLockTest() {
-        super();
-    }
+class AbstractFixnumLockTest {
 
     @org.junit.jupiter.api.Test
     void mainTest() {
         AbstractFixnumLock lock = new MockFixnumLock(2);
-        System.out.println("test");
 
         Thread threadOne = new Thread() {
             public void run() {

@@ -11,6 +11,7 @@ abstract class AbstractFixnumLock implements FixnumLock {
 
     private int numberOfThreads;
     private Thread[] registeredThreads;
+    private ThreadLocal<Integer> threadLocal = new ThreadLocal<Integer>();
 
     public AbstractFixnumLock(int numberOfThreads) {
         this.numberOfThreads = numberOfThreads;
@@ -23,7 +24,7 @@ abstract class AbstractFixnumLock implements FixnumLock {
     public synchronized int register() {
         for (int i = 0; i < numberOfThreads; i++) {
             if (registeredThreads[i] == null) {
-                ThreadLocal<Integer> threadLocal = new ThreadLocal<Integer>();
+                registeredThreads[i] = Thread.currentThread();
                 threadLocal.set(i);
                 return i;
             }
@@ -33,7 +34,6 @@ abstract class AbstractFixnumLock implements FixnumLock {
 
     @Override
     public synchronized void unregister() {
-        ThreadLocal<Integer> threadLocal = new ThreadLocal<Integer>();
         int threadId = threadLocal.get();
         registeredThreads[threadId] = null;
     }
