@@ -83,7 +83,6 @@ class AbstractFixnumLockTest {
                 try {
                     lock.unregister();
                 } catch (RuntimeException e) {
-                    e.printStackTrace();
                     assertEquals(e.getMessage(), "This thread is not registered, so it can't be unregistered");
                 }
             }
@@ -92,21 +91,16 @@ class AbstractFixnumLockTest {
         Thread threadTwo = new Thread() {
             public void run() {
                 try {
-                    try {
-                        lock.lock();
-                        lock.unregister();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        fail();
-                    }
+                    lock.lock();
+                    lock.unregister();
                 } catch (RuntimeException e) {
-                    e.printStackTrace();
-                    assertEquals(e.getMessage(), "This thread is not registered, so it can't be unregistered");
+                    assertFalse(true);
                 }
             }
         };
 
         threadOne.start();
+        threadTwo.start();
     }
 
     @org.junit.jupiter.api.Test
