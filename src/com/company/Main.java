@@ -1,5 +1,6 @@
 package com.company;
 
+import com.company.BackeryLock.BakeryLock;
 import com.company.Counters.AtomicCounter;
 import com.company.Counters.LockBasedCounter;
 import com.company.Counters.MonitorCounter;
@@ -19,8 +20,9 @@ public class Main {
         framework.addCounterToTest(new MonitorCounter(1), "Monitor");
         framework.addCounterToTest(new LockBasedCounter(new Mutex(), 1), "Mutex");
         framework.addCounterToTest(new LockBasedCounter(new SpinLock(), 1), "Spin lock");
+        framework.addCounterToTest(new LockBasedCounter(new BakeryLock(2), 1), "Barrier lock");
 
-        ArrayList<LockTestInfo> infos = framework.test(5, 10_000_000, 1);
+        ArrayList<LockTestInfo> infos = framework.test(2, 10_000_000, 1);
         System.out.println("---------------------\n----------------------\n");
 
         infos.forEach((info)->{

@@ -47,7 +47,11 @@ public class LockFramework {
                     LockBasedCounter lockCounter = (LockBasedCounter)curCounter;
                     if (lockCounter.getLock() instanceof AbstractFixnumLock) {
                         fixnumLock = (AbstractFixnumLock)lockCounter.getLock();
-                        fixnumLock.register();
+                        if (fixnumLock.getNumberOfThreads() != threadNumber)
+                            throw new RuntimeException(
+                                    "This intance of Fixnumlock is not capable of handling " +
+                                    threadNumber +
+                                    " threads");
                     }
                 }
 
@@ -113,114 +117,5 @@ public class LockFramework {
         Collections.sort(infos);
 
         return infos;
-//        Thread threads[] = new Thread[threadNumber];
-//
-//        Iterator<Map.Entry<ThreadSafeCounter, String>> it = counters.entrySet().iterator();
-//        CyclicBarrier barrier = new CyclicBarrier(threadNumber);
-//        long start;
-//        final int NANO_SECONDS = 1_000_000_000;
-//        double duration;
-//        while (it.hasNext()) {
-//            Map.Entry<ThreadSafeCounter, String> entry = it.next();
-//            try {
-//                for (int i = 0; i < threadNumber ; i++)
-//                    threads[i] = new Thread(()->{
-//                        try {
-//                            barrier.await();
-//                            entry.getKey().increase();
-//                        } catch (BrokenBarrierException | InterruptedException e) {
-//                            e.printStackTrace();
-//                        }
-//                    });
-//                start = System.nanoTime();
-//                for (int i = 0; i < threadNumber ; i++)
-//                    threads[i].start();
-//
-//                for (int i = 0; i < threadNumber; i++)
-//                    threads[i].join();
-//                duration = (double) (System.nanoTime() - start) / NANO_SECONDS;
-//                System.out.println(entry.getValue() + ": " + duration + "s.");
-//            } catch (Exception e){
-//                e.printStackTrace();
-//            }
-//        }
-//        final AtomicInteger aI = new AtomicInteger(0);
-//        final Counter counter1 = new Counter(1);
-//        CyclicBarrier barrier = new CyclicBarrier(MAGIC_CONST);
-//        for (int i = 0; i < MAGIC_CONST ; i++)
-//            threads[i] = new Thread(()->{
-//                try {
-//                    barrier.await();
-//                } catch (BrokenBarrierException | InterruptedException e) {
-//                    e.printStackTrace();
-//                }
-//                aI.incrementAndGet();
-//
-//            });
-//        long timeStart = System.nanoTime();
-//        for (int i = 0; i < MAGIC_CONST ; i++)
-//            threads[i].start();
-//        try {
-//            for (int i = 0; i < MAGIC_CONST; i++)
-//                threads[i].join();
-//        } catch (Exception e){
-//
-//        }
-//        long duration = System.nanoTime() - timeStart;
-//        System.out.println("Atomic integer took " + duration / 1_000_000_000d +"s.");
-//        Semaphore semaphore = new Semaphore(1);
-//        int counter[] = new int[1];
-//        for (int i = 0; i < MAGIC_CONST ; i++)
-//            threads[i] = new Thread(()->{
-//                try {
-//                    try {
-//                        barrier.await();
-//                    } catch (BrokenBarrierException | InterruptedException e) {
-//                        e.printStackTrace();
-//                    }
-//                semaphore.acquire();
-//                counter[0]++;
-//                semaphore.release();
-//                } catch (Exception e) {
-//
-//                }
-//            });
-//         timeStart = System.nanoTime();
-//        for (int i = 0; i < MAGIC_CONST ; i++)
-//            threads[i].start();
-//        try {
-//            for (int i = 0; i < MAGIC_CONST; i++)
-//                threads[i].join();
-//        } catch (Exception e){
-//
-//        }
-//        duration = System.nanoTime() - timeStart;
-//        System.out.println("Mutex took " + duration / 1_000_000_000d +"s.");
-//
-//        for (int i = 0; i < MAGIC_CONST ; i++)
-//            threads[i] = new Thread(()->{
-//                try {
-//                    try {
-//                        barrier.await();
-//                    } catch (BrokenBarrierException | InterruptedException e) {
-//                        e.printStackTrace();
-//                    }
-//                    counter1.increase();
-//
-//                } catch (Exception e) {
-//
-//                }
-//            });
-//        timeStart = System.nanoTime();
-//        for (int i = 0; i < MAGIC_CONST ; i++)
-//            threads[i].start();
-//        try {
-//            for (int i = 0; i < MAGIC_CONST; i++)
-//                threads[i].join();
-//        } catch (Exception e){
-//
-//        }
-//        duration = System.nanoTime() - timeStart;
-//        System.out.println("Monitor took " + duration / 1_000_000_000d +"s.");
     }
 }

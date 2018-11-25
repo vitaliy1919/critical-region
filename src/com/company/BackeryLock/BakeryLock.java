@@ -11,7 +11,7 @@ public class BakeryLock extends AbstractFixnumLock {
     List<Integer> tickets;
     List<Boolean> entering;
     int numberOfThreads;
-    BakeryLock(int numberOfThreads){
+    public BakeryLock(int numberOfThreads){
         super(numberOfThreads);
         this.numberOfThreads = numberOfThreads;
         tickets = new ArrayList<>(numberOfThreads);
