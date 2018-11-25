@@ -14,6 +14,10 @@ public abstract class AbstractFixnumLock implements FixnumLock {
         registeredThreads = new Thread[numberOfThreads];
     }
 
+    public int getNumberOfThreads() {
+        return numberOfThreads;
+    }
+
     // Each thread should get Id
     // If return value is -1, It means thread can't access the resource
     @Override
@@ -44,6 +48,11 @@ public abstract class AbstractFixnumLock implements FixnumLock {
             }
         }
         throw new RuntimeException("This thread is not registered, so it can't be unregistered");
+    }
+
+    @Override
+    public int getId() {
+        return threadLocal.get();
     }
 
     @Override
