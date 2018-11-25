@@ -47,6 +47,11 @@ public abstract class AbstractFixnumLock implements FixnumLock {
     }
 
     @Override
+    public int getId() {
+        return threadLocal.get();
+    }
+
+    @Override
     public void lock() {
         int id = register();
         lock(id);

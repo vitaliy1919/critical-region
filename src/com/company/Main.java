@@ -20,7 +20,7 @@ public class Main {
         framework.addCounterToTest(new LockBasedCounter(new Mutex(), 1), "Mutex");
         framework.addCounterToTest(new LockBasedCounter(new SpinLock(), 1), "Spin lock");
 
-        ArrayList<LockTestInfo> infos = framework.test(500,5);
+        ArrayList<LockTestInfo> infos = framework.test(5, 10_000_000, 1);
         System.out.println("---------------------\n----------------------\n");
 
         infos.forEach((info)->{
