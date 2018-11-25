@@ -20,14 +20,14 @@ public class LockBasedCounter extends ThreadSafeCounter {
     @Override
     public void increase() {
         lock.lock();
-        value[0]++;
+        value++;
         lock.unlock();
     }
 
     @Override
     public void decrease() {
         lock.lock();
-        value[0]--;
+        value--;
         lock.unlock();
     }
 }
