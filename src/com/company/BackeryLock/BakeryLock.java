@@ -5,33 +5,33 @@ import com.company.FixnumLock.AbstractFixnumLock;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicIntegerArray;
 import java.util.concurrent.locks.Condition;
 
 public class BakeryLock extends AbstractFixnumLock {
-    List<Integer> tickets;
-    List<Boolean> entering;
+    AtomicIntegerArray tickets;
+    AtomicIntegerArray entering;
     int numberOfThreads;
     BakeryLock(int numberOfThreads){
         super(numberOfThreads);
         this.numberOfThreads = numberOfThreads;
-        tickets = new ArrayList<>(numberOfThreads);
-        entering = new ArrayList<>(numberOfThreads);
+        tickets = new AtomicIntegerArray(numberOfThreads);
+        entering = new AtomicIntegerArray(numberOfThreads);
         for (int i = 0; i < numberOfThreads; i++)
         {
-            tickets.add(0);
-            entering.add(false);
+            tickets.set(i, 0);
+            entering.set(i, 0);
         }
     }
     @Override
-    public void lock() {
-        int threadId = register();
-        entering.set(threadId, true);
+    public void lock(int id) {
+        entering.set(id, 1);
         int max = 0;
-        for (int ticket : tickets) {
-            max = Math.max(max, ticket);
+        for (int i =0 ; i <tickets.length(); i++) {
+            max = Math.max(max, tickets.get(i));
         }
-        tickets.set(threadId, max + 1);
-        entering.set(threadId, false);
+        tickets.set(id, max + 1);
+        entering.set(id, 0);
         //System.out.println("Thread" + Thread.currentThread().getId() + "id: " + threadId);
         /*synchronized (obj){
             for (int i = 0; i < tickets.size(); i++) {
@@ -40,14 +40,12 @@ public class BakeryLock extends AbstractFixnumLock {
         }*/
         for (int i = 0; i < numberOfThreads; ++i)
         {
-            if (i != threadId)
+            if (i != id)
             {
-                while (entering.get(i)) {
-                    Thread.yield();
+                while (entering.get(i) == 1) {
                 }
-                while (tickets.get(i) != 0 && ( tickets.get(threadId) > tickets.get(i)  ||
-                        (tickets.get(threadId) == tickets.get(i) && threadId > i))){
-                    Thread.yield();
+                while (tickets.get(i) != 0 && ( tickets.get(id) > tickets.get(i)  ||
+                        (tickets.get(id) == tickets.get(i) && id > i))){
                 }
             }
         }
@@ -55,10 +53,7 @@ public class BakeryLock extends AbstractFixnumLock {
 
     }
 
-    @Override
-    public void lock(int id) {
 
-    }
 
     @Override
     public void lockInterruptibly() throws InterruptedException {
@@ -86,15 +81,18 @@ public class BakeryLock extends AbstractFixnumLock {
     }
 
     @Override
+    public void unlock() {
+
+    }
+
+    @Override
     public boolean tryLock(int id, long time, TimeUnit unit) throws InterruptedException {
         return false;
     }
 
-    @Override
-    public void unlock() {
-        int threadId = register();
-        tickets.set(threadId, 0);
-        unregister();
+
+    public void unlock(int id) {
+        tickets.set(id, 0);
     }
 
     @Override
