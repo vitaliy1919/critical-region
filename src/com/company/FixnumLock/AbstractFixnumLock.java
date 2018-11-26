@@ -44,10 +44,8 @@ public abstract class AbstractFixnumLock implements FixnumLock {
         if (localId == null) {
             throw new RuntimeException("This thread is not registered, so it can't be unregistered");
         }
-        synchronized (this) {
-            registeredThreads[localId] = null;
-            threadLocal.remove();
-        }
+        registeredThreads[localId] = null;
+        threadLocal.remove();
     }
 
     @Override
