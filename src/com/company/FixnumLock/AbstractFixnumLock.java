@@ -22,32 +22,32 @@ public abstract class AbstractFixnumLock implements FixnumLock {
     // If return value is -1, It means thread can't access the resource
     @Override
     public synchronized int register() {
-        int freePlace = -1;
-        for (int i = 0; i < numberOfThreads; i++) {
-            if (registeredThreads[i] == null && freePlace == -1) {
-                freePlace = i;
-            }
-            if (registeredThreads[i] == Thread.currentThread()) {
-                return i;
+        Integer localId = threadLocal.get();
+        if (localId != null) {
+            return localId;
+        }
+        synchronized (this) {
+            for (int i = 0; i < numberOfThreads; i++) {
+                if (registeredThreads[i] == null) {
+                    registeredThreads[i] = Thread.currentThread();
+                    threadLocal.set(i);
+                    return i;
+                }
             }
         }
-        if (freePlace != -1) {
-            registeredThreads[freePlace] = Thread.currentThread();
-            threadLocal.set(freePlace);
-        }
-        return freePlace;
+        return -1;
     }
 
     @Override
     public synchronized void unregister() throws RuntimeException {
-        for (int i = 0; i < numberOfThreads; i++) {
-            if (registeredThreads[i] == Thread.currentThread()) {
-                threadLocal.remove();
-                registeredThreads[i] = null;
-                return;
-            }
+        Integer localId = threadLocal.get();
+        if (localId == null) {
+            throw new RuntimeException("This thread is not registered, so it can't be unregistered");
         }
-        throw new RuntimeException("This thread is not registered, so it can't be unregistered");
+        synchronized (this) {
+            registeredThreads[localId] = null;
+            threadLocal.remove();
+        }
     }
 
     @Override
@@ -62,6 +62,14 @@ public abstract class AbstractFixnumLock implements FixnumLock {
     }
 
     public abstract void lock(int id);
+
+    @Override
+    public void unlock() {
+        int id = register();
+        lock(id);
+    }
+
+    public abstract void unlock(int id);
 
     @Override
     public void lockInterruptibly() throws InterruptedException {
