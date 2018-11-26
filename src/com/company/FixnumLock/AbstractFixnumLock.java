@@ -66,7 +66,7 @@ public abstract class AbstractFixnumLock implements FixnumLock {
     @Override
     public void unlock() {
         int id = register();
-        lock(id);
+        unlock(id);
     }
 
     public abstract void unlock(int id);
