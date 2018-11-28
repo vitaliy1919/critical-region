@@ -7,15 +7,15 @@ public class MonitorCounter extends ThreadSafeCounter {
 
     @Override
     public void increase() {
-        synchronized (value) {
-            value[0]++;
+        synchronized (this) {
+            value++;
         }
     }
 
     @Override
     public void decrease() {
-        synchronized (value) {
-            value[0]--;
+        synchronized (this) {
+            value--;
         }
     }
 }

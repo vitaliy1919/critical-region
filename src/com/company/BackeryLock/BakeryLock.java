@@ -12,7 +12,7 @@ public class BakeryLock extends AbstractFixnumLock {
     AtomicIntegerArray tickets;
     AtomicIntegerArray entering;
     int numberOfThreads;
-    BakeryLock(int numberOfThreads){
+    public BakeryLock(int numberOfThreads){
         super(numberOfThreads);
         this.numberOfThreads = numberOfThreads;
         tickets = new AtomicIntegerArray(numberOfThreads);
