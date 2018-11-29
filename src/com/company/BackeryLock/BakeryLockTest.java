@@ -6,7 +6,6 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 public class BakeryLockTest {
-    static int counter = 0;
     @Test
     public void checkBakeryLock() {
         AbstractFixnumLock lock = new BakeryLock(4);
