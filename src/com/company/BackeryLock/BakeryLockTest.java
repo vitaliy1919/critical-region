@@ -6,97 +6,38 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 public class BakeryLockTest {
-    static int counter = 0;
     @Test
-    public void checkBakeryLock(){
+    public void checkBakeryLock() {
         AbstractFixnumLock lock = new BakeryLock(4);
-        Thread threadOne = new Thread() {
-            public void run() {
-                lock.lock();
-                System.out.println("Before " +  Thread.currentThread().getId()  + ": " + counter);
-                try {
-                    Thread.sleep(100);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                counter++;
-                System.out.println("After " +  Thread.currentThread().getId()  + ": " + counter);
-                lock.unlock();
-                try {
-                    Thread.sleep(500);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                lock.lock();
-                System.out.println("Before " +  Thread.currentThread().getId()  + ": " + counter);
-                counter++;
-                System.out.println("After " +  Thread.currentThread().getId()  + ": " + counter);
-                lock.unlock();
-            }
-        };
-        Thread threadTwo = new Thread() {
-            public void run() {
-                lock.lock();
-                System.out.println("Before " +  Thread.currentThread().getId()  + ": " + counter);
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                counter++;
-                System.out.println("After " +  Thread.currentThread().getId()  + ": " + counter);
-                lock.unlock();
-            }
-        };
-        Thread threadThree = new Thread() {
-            public void run() {
-                lock.lock();
-                System.out.println("Before " +  Thread.currentThread().getId()  + ": " + counter);
-                try {
-                    Thread.sleep(100);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                counter--;
-                System.out.println("After " +  Thread.currentThread().getId()  + ": " + counter);
-                lock.unlock();
-            }
-        };
-        Thread threadFour = new Thread() {
-            public void run() {
-                lock.lock();
-                System.out.println("Before " +  Thread.currentThread().getId()  + ": " + counter);
-                try {
-                    Thread.sleep(100);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                counter--;
-                System.out.println("After " +  Thread.currentThread().getId()  + ": " + counter);
-                lock.unlock();
+        BakeryLockTread bakeryLockTread1 = new BakeryLockTread();
+        BakeryLockTread bakeryLockTread2 = new BakeryLockTread();
+        BakeryLockTread bakeryLockTread3 = new BakeryLockTread();
+        BakeryLockTread bakeryLockTread4 = new BakeryLockTread();
+        bakeryLockTread1.setLock(lock);
+        bakeryLockTread2.setLock(lock);
+        bakeryLockTread3.setLock(lock);
+        bakeryLockTread4.setLock(lock);
+        bakeryLockTread1.operation = 1;
+        bakeryLockTread2.operation = -1;
+        bakeryLockTread3.operation = 1;
+        bakeryLockTread4.operation = -1;
+        bakeryLockTread1.start();
+        bakeryLockTread2.start();
+        bakeryLockTread3.start();
+        bakeryLockTread4.start();
 
-                lock.lock();
-                System.out.println("Before " +  Thread.currentThread().getId()  + ": " + counter);
-                try {
-                    Thread.sleep(200);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                counter--;
-                System.out.println("After " +  Thread.currentThread().getId()  + ": " + counter);
-                lock.unlock();
+        while(true){
+            System.out.println("Counter:" + BakeryLockTread.globalCounter);
+            System.out.println(bakeryLockTread1.iterations);
+            System.out.println(bakeryLockTread2.iterations);
+            System.out.println(bakeryLockTread3.iterations);
+            System.out.println(bakeryLockTread4.iterations);
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
-        };
-        threadOne.start();
-        threadTwo.start();
-        threadThree.start();
-        threadFour.start();
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
         }
-        System.out.println("Counter:" + counter);
     }
 
 }
