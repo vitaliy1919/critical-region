@@ -4,12 +4,9 @@ import com.company.Counters.LockBasedCounter;
 import com.company.Counters.ThreadSafeCounter;
 import com.company.FixnumLock.AbstractFixnumLock;
 
-
 import java.util.*;
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
-import java.util.concurrent.Semaphore;
-import java.util.concurrent.atomic.AtomicInteger;
 
 class Counter {
     volatile int value;
@@ -25,6 +22,7 @@ class Counter {
 
 public class LockFramework {
     HashMap<ThreadSafeCounter, String> counters = new HashMap<>();
+
     public void addCounterToTest(ThreadSafeCounter counter, String name) {
         counters.put(counter, name);
     }
@@ -44,24 +42,24 @@ public class LockFramework {
             try {
                 AbstractFixnumLock fixnumLock = null;
                 if (curCounter instanceof LockBasedCounter) {
-                    LockBasedCounter lockCounter = (LockBasedCounter)curCounter;
+                    LockBasedCounter lockCounter = (LockBasedCounter) curCounter;
                     if (lockCounter.getLock() instanceof AbstractFixnumLock) {
-                        fixnumLock = (AbstractFixnumLock)lockCounter.getLock();
+                        fixnumLock = (AbstractFixnumLock) lockCounter.getLock();
                         if (fixnumLock.getNumberOfThreads() != threadNumber)
                             throw new RuntimeException(
                                     "This intance of Fixnumlock is not capable of handling " +
-                                    threadNumber +
-                                    " threads");
+                                            threadNumber +
+                                            " threads");
                     }
                 }
 
                 // runs threadNumber instanses of counter
                 // start a barier and increases counter
-                for (int i = 0; i < threadNumber ; i++)
-                    threads[i] = new Thread(()->{
+                for (int i = 0; i < threadNumber; i++)
+                    threads[i] = new Thread(() -> {
                         try {
                             barrier.await();
-                            for (int op = 0; op < increaseOperationsCount; op++ )
+                            for (int op = 0; op < increaseOperationsCount; op++)
                                 curCounter.increase();
                         } catch (BrokenBarrierException | InterruptedException e) {
                             e.printStackTrace();
@@ -70,7 +68,7 @@ public class LockFramework {
 
                 start = System.nanoTime();
 
-                for (int i = 0; i < threadNumber ; i++)
+                for (int i = 0; i < threadNumber; i++)
                     threads[i].start();
 
                 for (int i = 0; i < threadNumber; i++)
@@ -89,12 +87,13 @@ public class LockFramework {
 
                 System.out.println(entry.getValue() + ": " + duration + "s.");
 
-            } catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
     }
-    public ArrayList<LockTestInfo> test(int threadNumber, int operationCount,  int iterations)  {
+
+    public ArrayList<LockTestInfo> test(int threadNumber, int operationCount, int iterations) {
         final int MAGIC_CONST = 5000;
         HashMap<ThreadSafeCounter, Double> durations = new HashMap<>();
 

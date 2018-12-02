@@ -11,17 +11,18 @@ public class BakeryLock extends AbstractFixnumLock {
     List<Integer> tickets;
     List<Boolean> entering;
     int numberOfThreads;
-    public BakeryLock(int numberOfThreads){
+
+    public BakeryLock(int numberOfThreads) {
         super(numberOfThreads);
         this.numberOfThreads = numberOfThreads;
         tickets = new ArrayList<>(numberOfThreads);
         entering = new ArrayList<>(numberOfThreads);
-        for (int i = 0; i < numberOfThreads; i++)
-        {
+        for (int i = 0; i < numberOfThreads; i++) {
             tickets.add(0);
             entering.add(false);
         }
     }
+
     @Override
     public void lock() {
         int threadId = register();
@@ -38,15 +39,13 @@ public class BakeryLock extends AbstractFixnumLock {
                 System.out.print(tickets.get(i) + " ");
             }
         }*/
-        for (int i = 0; i < numberOfThreads; ++i)
-        {
-            if (i != threadId)
-            {
+        for (int i = 0; i < numberOfThreads; ++i) {
+            if (i != threadId) {
                 while (entering.get(i)) {
                     Thread.yield();
                 }
-                while (tickets.get(i) != 0 && ( tickets.get(threadId) > tickets.get(i)  ||
-                        (tickets.get(threadId) == tickets.get(i) && threadId > i))){
+                while (tickets.get(i) != 0 && (tickets.get(threadId) > tickets.get(i) ||
+                        (tickets.get(threadId) == tickets.get(i) && threadId > i))) {
                     Thread.yield();
                 }
             }
@@ -95,6 +94,11 @@ public class BakeryLock extends AbstractFixnumLock {
         int threadId = register();
         tickets.set(threadId, 0);
         unregister();
+    }
+
+    @Override
+    public void unlock(int id) {
+
     }
 
     @Override

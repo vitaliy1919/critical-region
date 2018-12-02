@@ -4,6 +4,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class AtomicCounter extends ThreadSafeCounter {
     private final AtomicInteger integer;
+
     public AtomicCounter(int value) {
         super(value);
         integer = new AtomicInteger(value);

@@ -150,13 +150,16 @@ class MockFixnumLock extends AbstractFixnumLock {
     }
 
     @Override
-    public void lock(int id) {}
+    public void lock(int id) {
+    }
 
     @Override
-    public void unlock(int id) {}
+    public void unlock(int id) {
+    }
 
     @Override
-    public void lockInterruptibly(int id) {}
+    public void lockInterruptibly(int id) {
+    }
 
     @Override
     public boolean tryLock(int id) {
@@ -169,5 +172,6 @@ class MockFixnumLock extends AbstractFixnumLock {
     }
 
     @Override
-    public void unlock() {}
+    public void unlock() {
+    }
 }
